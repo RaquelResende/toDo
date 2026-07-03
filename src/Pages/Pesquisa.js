@@ -11,7 +11,7 @@ import {
 import { TextInput } from "react-native-web";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function Cards() {
+export default function Pesquisa() {
   const [modalVisivel, setModalVisivel] = useState(false);
   const [novaTarefa, setNovaTarefa] = useState("");
   const [colunaSelecionada, setColunaSelecionada] = useState(null);
