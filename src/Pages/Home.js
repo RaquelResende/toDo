@@ -76,6 +76,10 @@ export default function Home() {
     setColunas(novaLista);
   }
 
+  function navegarSbre(){
+    navigation.navigate("Sobre");
+  }
+
   return (
     <ScrollView showsVerticalScrollIndicator={true}>
       <View>
@@ -136,6 +140,8 @@ export default function Home() {
         </View>
       ))}
     </ScrollView>
+
+    
   );
 }
 const style = StyleSheet.create({
@@ -171,9 +177,9 @@ const style = StyleSheet.create({
   },
   input: {
     backgroundColor: "#fff",
-    borderWidth: "1",
+    borderWidth: 1,
     borderRadius: 8,
-    boderColor: "#ccc",
+    borderColor: "#ccc",
     padding: 10,
     marginBottom: 10,
     paddingVertical: 10,
@@ -193,7 +199,7 @@ const style = StyleSheet.create({
     gap: 10,
   },
   textoBotao: {
-    Color: "#fff",
+    color: "#fff",
     textAlign: "center",
     fontWeight: "bold",
   },
