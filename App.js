@@ -3,7 +3,8 @@ import { StyleSheet, Text, View } from "react-native";
 import Cards from "./src/Componentes/ComponenteCards.jsx";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import Login from "./src/Pages/Login.js"
+import ComponenteLogin from "./src/Componentes/ComponenteLogin.jsx";
 import Home from "./src/Pages/Home.js";
 import Pesquisa from "./src/Pages/Pesquisa.js";
 import { Feather } from "@expo/vector-icons";
@@ -32,6 +33,17 @@ export default function App() {
         }
        }}
       />
+
+      <Tab.Screen
+      name= "Login"
+      component={ComponenteLogin}
+      options= {{
+        tabBarIcon:({color, size}) =>{
+          return <Feather name = "user"  color={color} size={size}/>
+         }
+      }}
+      />
+
     </Tab.Navigator>
     </NavigationContainer>
   );
