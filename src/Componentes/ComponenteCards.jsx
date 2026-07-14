@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FlatList,
   ScrollView,
@@ -7,9 +7,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
+  TextInput,
 } from "react-native";
-import { TextInput } from "react-native-web";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Cards() {
   const [modalVisivel, setModalVisivel] = useState(false);
@@ -48,31 +49,84 @@ export default function Cards() {
     },
   ]);
 
+  useEffect(() => {
+    carregarTarefas();
+  }, []);
+
+  async function salvarTarefas(lista) {
+    try {
+      console.log("Salvando", lista);
+
+      await AsyncStorage.setItem("@tarefas", JSON.stringify(lista));
+      console.log("Salvou");
+    } catch (error) {
+      console.log("Erro de salvar", error);
+    }
+  }
+
+  async function carregarTarefas() {
+    try {
+      const dados = await AsyncStorage.getItem("@tarefas");
+      if (dados != null) {
+        setColunas(JSON.parse(dados));
+      }
+    } catch (error) {
+      console.log("Error ao carregar", error);
+    }
+  }
+  async function adicionarTarefas() {
+    if (novaTarefa.trim() === "") return;
+
+    const novaLista = colunas.map((coluna) => ({
+      ...coluna,
+      tarefas: [...coluna.tarefas],
+    }));
+
+    const indice = novaLista.findIndex(
+      (coluna) => coluna.id === colunaSelecionada,
+    );
+
+    if (indice !== -1) {
+      novaLista[indice].tarefas.push({
+        id: Date.now().toString(),
+        nome: novaTarefa,
+      });
+
+      setColunas(novaLista);
+      console.log("Estado atualizado:", novaLista);
+      await salvarTarefas(novaLista);
+    }
+    setNovaTarefa("");
+    setModalVisivel(false);
+  }
+
   function adicionarModal(idColuna) {
     setColunaSelecionada(idColuna);
     setModalVisivel(true);
   }
 
-  function adicionarTarefa() {
-    if (novaTarefa === "") return;
-    const novaLista = [...colunas];
+  // function adicionarTarefa() {
+  //   if (novaTarefa === "") return;
+  //   const novaLista = [...colunas];
 
-    novaLista[0].tarefas.push({
-      id: Date.now().toString(),
-      nome: novaTarefa,
-    });
-    setColunas(novaLista);
-    setNovaTarefa("");
-  }
+  //   novaLista[0].tarefas.push({
+  //     id: Date.now().toString(),
+  //     nome: novaTarefa,
+  //   });
+  //   setColunas(novaLista);
+  //   setNovaTarefa("");
+  // }
 
   return (
     <ScrollView showsVerticalScrollIndicator={true}>
       {colunas.map((coluna) => (
         <View key={coluna.id} style={style.coluna}>
           <Text style={style.titulo}>{coluna.titulo}</Text>
+
           <TouchableOpacity onPress={() => adicionarModal(coluna.id)}>
             <Ionicons name="add-circle" size={40} color="#2196F3" />
           </TouchableOpacity>
+
           <FlatList
             data={coluna.tarefas}
             keyExtractor={(item) => item.id}
@@ -82,39 +136,41 @@ export default function Cards() {
               </View>
             )}
           />
-          <Modal
-            visible={modalVisivel}
-            transparente={true}
-            animationType="slide"
-          >
-            <View style={style.topo}>
-              <TextInput
-                style={style.input}
-                placeholder="Digite sua tarefa"
-                value={novaTarefa}
-                onChangeText={setNovaTarefa}
-              ></TextInput>
-              <View style={style.botaoContainer}>
-                <TouchableOpacity onPress={adicionarTarefa} style={style.botao}>
-                  <Text style={style.textoBotao}>Adicionar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setModalVisivel(false)}
-                  style={style.botao}
-                >
-                  <Text style={style.textoBotao}>Cancelar</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
         </View>
       ))}
+
+      <Modal visible={modalVisivel} transparent={true} animationType="slide">
+        <View style={style.topo}>
+          <TextInput
+            style={style.input}
+            placeholder="Digite sua tarefa"
+            value={novaTarefa}
+            onChangeText={setNovaTarefa}
+          ></TextInput>
+
+          <View style={style.botaoContainer}>
+            <TouchableOpacity onPress={adicionarTarefas} style={style.botao}>
+              <Text style={style.textoBotao}>Adicionar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setModalVisivel(false);
+                setNovaTarefa("");
+              }}
+              style={style.botao}
+            >
+              <Text style={style.textoBotao}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
 const style = StyleSheet.create({
   coluna: {
-    with: 250,
+    width: 250,
     margin: 10,
     backgroundColor: "#ECEFF1",
     padding: 10,
@@ -142,9 +198,9 @@ const style = StyleSheet.create({
   },
   input: {
     backgroundColor: "#fff",
-    borderWidth: "1",
+    borderWidth: 1,
     borderRadius: 8,
-    boderColor: "#ccc",
+    borderColor: "#ccc",
     padding: 10,
     marginBottom: 10,
   },
@@ -160,7 +216,7 @@ const style = StyleSheet.create({
     gap: 10,
   },
   textoBotao: {
-    Color: "#fff",
+    color: "#fff",
     textAlign: "center",
     fontWeight: "bold",
   },

@@ -10,7 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 
-export default function ComponenteLogin() {
+export default function ComponenteRecuperarSenha() {
   const navigation = useNavigation();
 
   return (
@@ -18,34 +18,31 @@ export default function ComponenteLogin() {
       source={require("../../assets/ceu.jpg")}
       style={style.backgroudImagem}
     >
+      <View style={style.tituloContaine}>
+        <Text style={style.titulo}>Recuperar Senha</Text>
+      </View>
+
       <View style={style.containe}>
         <View style={style.cardLogin}>
-          <View style={style.tituloContaine}>
-            <Text style={style.titulo}>Login</Text>
-          </View>
-
           <View>
-            <Text style={style.texto}>Usuario:</Text>
+            <Text style={style.texto}>E-mail</Text>
             <TextInput style={style.input}></TextInput>
 
-            <Text style={style.texto}>Senha:</Text>
+            <Text style={style.texto}>Nova Senha:</Text>
             <TextInput style={style.input}></TextInput>
           </View>
 
           <View>
-            <TouchableOpacity
-            onPress={()=> navigation.navigate("Tabs")} style={style.botaoContaine}>
-              <Text style={style.botaoTexto}>Entrar</Text>
+            <TouchableOpacity style={style.botaoContaine}>
+              <Text style={style.botaoTexto}>Recuperar Senha</Text>
             </TouchableOpacity>
           </View>
 
           <View style={style.subtituloCntainer}>
             <Text>
-              Esqueceu a senha? |
-              <TouchableOpacity
-                onPress={() => navigation.navigate("RecuperarSenha")}
-              >
-                <Link style={style.link}> clique aqui</Link>
+              Volte para o Login |
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <Link style={style.link}> clique aqui !</Link>
               </TouchableOpacity>
             </Text>
           </View>
@@ -59,7 +56,7 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "10%",
+    marginTop: "5%",
   },
 
   cardLogin: {
@@ -76,12 +73,12 @@ const style = StyleSheet.create({
   },
 
   titulo: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    // flex: 1,
+    // justifyContent: "center",
+    // alignItems: "center",
     color: "#fff",
     fontSize: 30,
-    marginBottom: 30,
+    margin: 20,
   },
 
   tituloContaine: {
@@ -94,25 +91,30 @@ const style = StyleSheet.create({
     color: "#fff",
   },
   input: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    borderColor: "#8c8989",
+    borderWidth: 0.5,
     borderRadius: 10,
+    marginBottom: 10,
+    color: "#fff",
+    fontSize: 15,
   },
   botaoContaine: {
     alignItems: "center",
     backgroundColor: "#062429",
-    borderRadius: 3,
-    paddingHorizontal: 30,
-    paddingVertical: 3,
+    borderRadius: 10,
+
     margin: 10,
   },
   botaoTexto: {
     color: "#fff",
+    paddind: 4,
   },
   subtituloCntainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 20,
   },
   link: {
     color: "#fff",

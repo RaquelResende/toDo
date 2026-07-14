@@ -57,13 +57,13 @@ export default function Home() {
   }
 
   function adicionarTarefa() {
-    if (novaTarefa === "") return;
+    if (!novaTarefa.trim()) return;
     const novaLista = [...colunas];
 
-    novaLista[0].tarefas.push({
-      id: Date.now().toString(),
-      nome: novaTarefa,
-    });
+    const coluna = novaLista.find((coluna) => coluna.id === colunaSelecionada);
+
+    coluna.tarefas.push({ id: Date.now().toString(), nome: novaTarefa });
+
     setColunas(novaLista);
     setNovaTarefa("");
   }
@@ -76,21 +76,24 @@ export default function Home() {
     setColunas(novaLista);
   }
 
-  function navegarSbre(){
+  function navegarSobre() {
     navigation.navigate("Sobre");
   }
 
   return (
     <ScrollView showsVerticalScrollIndicator={true}>
-      <View>
+      {/* Testes de navegação */}
+      {/* <View>
         <TouchableOpacity onPress={() => navigation.navigate("Pesquisa")}>
           <Text>Ir para Pesquisa </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
       {colunas.map((coluna) => (
         <View key={coluna.id} style={style.coluna}>
           <Text style={style.titulo}>{coluna.titulo}</Text>
-          <TouchableOpacity onPress={() => adicionarModal(coluna.id)}>
+          <TouchableOpacity
+            onPress={() => adicionarModal(coluna.id, coluna.titulo)}
+          >
             <Ionicons name="add-circle" size={40} color="#2196F3" />
           </TouchableOpacity>
           <FlatList
@@ -114,6 +117,14 @@ export default function Home() {
             transparente={true}
             animationType="slide"
           >
+            <View>
+              <TouchableOpacity
+                style={style.botaoModalContaine}
+                onPress={() => setModalVisivel(false)}
+              >
+                <Text style={style.botaoModal}>X</Text>
+              </TouchableOpacity>
+            </View>
             <View style={style.topo}>
               <View>
                 <TextInput
@@ -140,8 +151,6 @@ export default function Home() {
         </View>
       ))}
     </ScrollView>
-
-    
   );
 }
 const style = StyleSheet.create({
@@ -165,6 +174,22 @@ const style = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  botaoModalContaine: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    padding: 15,
+  },
+  botaoModal: {
+    width: 30,
+    height: 30,
+    backgroundColor: "#880909",
+    textAlign: "center",
+    color: "#fff",
+    borderRadius: 10,
+    borderColor: "#880909",
+    borderCurve: 20,
+    paddingTop: 3,
   },
   topo: {
     padding: 15,
