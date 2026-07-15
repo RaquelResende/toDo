@@ -157,6 +157,8 @@ const style = StyleSheet.create({
   botaoTexto: {
     color: "#fff",
     paddind: 4,
+    fontSize: 15,
+    padding:5,
   },
   subtituloCntainer: {
     justifyContent: "center",

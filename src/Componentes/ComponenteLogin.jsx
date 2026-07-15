@@ -192,16 +192,17 @@ const style = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#062429",
     borderRadius: 3,
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     paddingVertical: 3,
     margin: 10,
+    marginTop:20,
   },
   botaoTexto: {
     color: "#fff",
   },
   containeBts:{
  flexDirection: "row",
-  gap: 3,
+  gap: 2,
   },
   subtituloCntainer: {
     flex: 1,
