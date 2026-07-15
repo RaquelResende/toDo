@@ -10,6 +10,7 @@ import ComponenteRecuperarSenha from "./src/Componentes/ComponenteRecuperarSenha
 
 import ComponenteLogin from "./src/Componentes/ComponenteLogin.jsx";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ComponenteCadastro from "./src/Componentes/ComponenteCadastro.jsx";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,6 +49,9 @@ export default function App() {
           component={ComponenteRecuperarSenha}
         />
         <Stack.Screen name="Tabs" component={Tabs} />
+
+        <Stack.Screen name="Cadastrar" 
+        component={ComponenteCadastro}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -18,12 +18,14 @@ export default function ComponenteRecuperarSenha() {
       source={require("../../assets/ceu.jpg")}
       style={style.backgroudImagem}
     >
-      <View style={style.tituloContaine}>
-        <Text style={style.titulo}>Recuperar Senha</Text>
-      </View>
+
 
       <View style={style.containe}>
         <View style={style.cardLogin}>
+
+             <View style={style.tituloContaine}>
+        <Text style={style.titulo}>Recuperar Senha</Text>
+          </View>
           <View>
             <Text style={style.texto}>E-mail</Text>
             <TextInput style={style.input}></TextInput>
@@ -60,12 +62,14 @@ const style = StyleSheet.create({
   },
 
   cardLogin: {
-    width: "23%",
-    padding: 20,
+    width: "80%",
+    height:"95%",
+    padding: 10,
     borderWidth: 1,
     borderColor: "#000000",
     borderRadius: 15,
     backgroundColor: "rgba(0,0,0,0.3)", // fundo transparente
+    marginTop: 100,
   },
 
   backgroudImagem: {
@@ -77,12 +81,11 @@ const style = StyleSheet.create({
     // justifyContent: "center",
     // alignItems: "center",
     color: "#fff",
-    fontSize: 30,
+    fontSize: 20,
     margin: 20,
   },
 
   tituloContaine: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -111,7 +114,6 @@ const style = StyleSheet.create({
     paddind: 4,
   },
   subtituloCntainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,

@@ -5,23 +5,14 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function ComponenteLogin() {
+export default function ComponenteCadastro() {
   const navigation = useNavigation();
 
-  const [nome, setNome] = useState("");
-  const [senha, setSenha] = useState("");
-  const [usuarios, setUsuarios] = useState([]);
-
-
-  
   async function SalvarNovoUsuario() {
     try{
       if(nome.trim() === "" || senha.trim() === ""){
@@ -66,74 +57,39 @@ export default function ComponenteLogin() {
     
   }
 
-  async function fazerLogin(){
-
-    try{
-      const dados = await AsyncStorage.getItem("usuarios");
-
-      if(dados === null){
-        alert("Nenhum usuario cadastrado!");return;
-      }
-
-      const lista = JSON.parse("dados");
-
-      const usuarioEncontrado = lista.find((usuario) => usuario.nome === nome && usuario.senha === senha)
-
-      if(usuarioEncontrado){
-        navigation.navigate("Tabs")
-        alert("Usuario encontrado com sucesso!")
-
-      }else{
-        alert("Nao encontrado esse usuario")
-      }
-
-    }catch(error){
-      console.log("Algo deu errado", error);
-    }
-  }
   return (
     <ImageBackground
       source={require("../../assets/ceu.jpg")}
       style={style.backgroudImagem}
     >
+
+
       <View style={style.containe}>
         <View style={style.cardLogin}>
-          <View style={style.tituloContaine}>
-            <Text style={style.titulo}>Login</Text>
-          </View>
 
+             <View style={style.tituloContaine}>
+        <Text style={style.titulo}>Cadastro</Text>
+          </View>
           <View>
-            <Text style={style.texto}>Usuario:</Text>
+            <Text style={style.texto}>E-mail</Text>
             <TextInput style={style.input}></TextInput>
 
-            <Text style={style.texto}>Senha:</Text>
+            <Text style={style.texto}>Nova Senha:</Text>
             <TextInput style={style.input}></TextInput>
           </View>
 
-     <View style={style.containeBts}> 
-
           <View>
-            <TouchableOpacity
-            onPress={()=> navigation.navigate(fazerLogin)} style={style.botaoContaine}>
-              <Text style={style.botaoTexto}>Entrar</Text>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <TouchableOpacity
-            onPress={()=> navigation.navigate("Cadastrar")} style={style.botaoContaine}>
+            <TouchableOpacity 
+            onPress={SalvarNovoUsuario}  style={style.botaoContaine}>
               <Text style={style.botaoTexto}>Cadastrar</Text>
             </TouchableOpacity>
           </View>
 
-          </View>
-
           <View style={style.subtituloCntainer}>
             <Text>
-              Esqueceu a senha? |
-              <TouchableOpacity
-                onPress={() => navigation.navigate("RecuperarSenha")}
-              >
-                <Link style={style.link}> clique aqui</Link>
+              Volte para o Login |
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <Link style={style.link}> clique aqui !</Link>
               </TouchableOpacity>
             </Text>
           </View>
@@ -147,13 +103,13 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "10%",
+    marginTop: "5%",
   },
 
   cardLogin: {
-    width: "70%",
-    height:"70%",
-    padding: 20,
+    width: "80%",
+    height:"95%",
+    padding: 10,
     borderWidth: 1,
     borderColor: "#000000",
     borderRadius: 15,
@@ -166,16 +122,15 @@ const style = StyleSheet.create({
   },
 
   titulo: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    // flex: 1,
+    // justifyContent: "center",
+    // alignItems: "center",
     color: "#fff",
-    fontSize: 30,
-    marginBottom: 30,
+    fontSize: 20,
+    margin: 20,
   },
 
   tituloContaine: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -184,29 +139,29 @@ const style = StyleSheet.create({
     color: "#fff",
   },
   input: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    borderColor: "#8c8989",
+    borderWidth: 0.5,
     borderRadius: 10,
+    marginBottom: 10,
+    color: "#fff",
+    fontSize: 15,
   },
   botaoContaine: {
     alignItems: "center",
     backgroundColor: "#062429",
-    borderRadius: 3,
-    paddingHorizontal: 30,
-    paddingVertical: 3,
+    borderRadius: 10,
+
     margin: 10,
   },
   botaoTexto: {
     color: "#fff",
-  },
-  containeBts:{
- flexDirection: "row",
-  gap: 3,
+    paddind: 4,
   },
   subtituloCntainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 20,
   },
   link: {
     color: "#fff",
