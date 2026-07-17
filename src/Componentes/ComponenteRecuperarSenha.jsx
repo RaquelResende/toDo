@@ -13,6 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 export default function ComponenteRecuperarSenha() {
   const navigation = useNavigation();
 
+  
+
   return (
     <ImageBackground
       source={require("../../assets/ceu.jpg")}

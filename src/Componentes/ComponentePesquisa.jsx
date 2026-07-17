@@ -7,36 +7,60 @@ import {
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ComponentePesquisa() {
   const [pesquisa, setPesquisa] = useState("");
-
   const [colunas, setColunas] = useState([]);
-
   const [resultado, setResultado] = useState([]);
 
-  // Carregar dados salvos
-  useEffect(() => {
-    carregarColunas();
-  }, []);
 
+
+  // Carregar dados salvos
+  useFocusEffect(
+  useCallback(() => {
+
+    // limpa o campo de pesquisa
+    setPesquisa("");
+
+    // limpa os resultados antigos
+    setResultado([]);
+
+    // carrega novamente os dados
+    carregarColunas();
+
+     return () => {
+      setPesquisa("");
+      setResultado([]);
+     };
+  }, [])
+);
   async function carregarColunas() {
     try {
       const dados = await AsyncStorage.getItem("colunas");
+          console.log("Dados do AsyncStorage:", dados);
 
       if (dados !== null) {
         const lista = JSON.parse(dados);
 
+
+        console.log("lista:", lista);
+
         setColunas(lista);
         setResultado(lista);
+
+        console.log("Colunas carregadas:", lista);
       }
+    
     } catch (error) {
       console.log(error);
     }
   }
 
   function pesquisarColuna(texto) {
+    console.log("Texto pesquisado:",texto)
     setPesquisa(texto);
 
     if (texto.trim() === "") {
@@ -44,29 +68,39 @@ export default function ComponentePesquisa() {
 
       return;
     }
+   const busca = texto.toLowerCase();
 
-    const filtro = colunas
-      .map((coluna) => {
-        return {
-          ...coluna,
+   const filtro = colunas.filter((coluna)=>{
+    //verifica se encontrou o nome da coluna
+    const encontrouColuna = coluna.titulo
+    .toLowerCase()
+    .includes(busca);
+    
+    const encontrouTarefa = colunas.tarefas?.coluna.tarefas.filter((tarefa)=>
+    tarefa.nome.toLowerCase().includes(busca));
 
-          tarefas: coluna.tarefas.filter((tarefa) =>
-            tarefa.nome.toLowerCase().includes(texto.toLowerCase()),
-          ),
-        };
-      })
+    return encontrouColuna || encontrouTarefa
 
-      .filter((coluna) => {
-        // Pesquisa também pelo nome da coluna
+   })
+   //se pesquisar por coluna também mostra a tarefas dela
+   .map((coluna) => {
+    if(coluna.titulo.toLowerCase().includes(busca)){
+      return coluna;
+    }
+      // Se pesquisou uma tarefa, mostra somente as tarefas encontradas
+      return{
+      ...coluna,
+      tarefas: coluna.tarefas.filter((tarefa) =>tarefa.nome.toLowerCase().includes(busca))
 
-        return (
-          coluna.tarefas.length > 0 ||
-          coluna.titulo.toLowerCase().includes(texto.toLowerCase())
-        );
-      });
+      };
+    
 
-    setResultado(filtro);
+    
+   });
+ console.log("Filtro:", filtro)
+setResultado(filtro)
   }
+   
 
   return (
     <View style={style.container}>
@@ -74,16 +108,20 @@ export default function ComponentePesquisa() {
         style={style.input}
         placeholder="Pesquisar coluna ou tarefa"
         value={pesquisa}
-        onChangeText={pesquisarColuna}
+        onChangeText={setPesquisa}
       />
-
+    <TouchableOpacity
+    onPress={() => pesquisarColuna(pesquisa)}>
+     <Ionicons name="search" size={24} color="black"/>
+    </TouchableOpacity>
       {resultado.map((coluna) => (
         <View key={coluna.id} style={style.card}>
-          <Text style={style.titulo}>{coluna.titulo}</Text>
+          <Text style={style.titulo}>
+            {coluna.titulo}</Text>
 
           {coluna.tarefas.map((tarefa) => (
             <View key={tarefa.id}>
-              <Text>📌 {tarefa.nome}</Text>
+              <Text>{tarefa.nome}</Text>
             </View>
           ))}
         </View>

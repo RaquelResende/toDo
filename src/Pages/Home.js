@@ -63,11 +63,19 @@ export default function Home() {
 
   async function carregarTarefas() {
     try {
+     
       const dados = await AsyncStorage.getItem("colunas");
-
+        console.log("Salvou");
       if (dados != null) {
-        setColunas(JSON.parse(dados));
-      }
+        const lista = (JSON.parse(dados));
+
+        console.log("Lista:",lista)
+        setColunas(lista)
+      }else{
+        await AsyncStorage.setItem("colunas",JSON.stringify(colunasInicial))
+      };
+
+      setColunas(colunasInicial)
     } catch (error) {
       console.log(error);
     }
@@ -75,7 +83,11 @@ export default function Home() {
 
   async function salvarTarefas(lista) {
     try {
+          console.log("Lista que será salva:", lista);
       await AsyncStorage.setItem("colunas", JSON.stringify(lista));
+  const dados = await AsyncStorage.getItem("colunas");
+    console.log("Dados gravados:", dados);
+
     } catch (error) {
       console.log(error);
     }
@@ -114,7 +126,7 @@ export default function Home() {
   return (
     <ScrollView showsVerticalScrollIndicator={true}>
       <View>
-        <TouchableOpacity onPress={() => navigation.navigate("Pesquisar")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Pesquisa")}>
           <Ionicons name="search" size={20} color="#000000" />
         </TouchableOpacity>
       </View>

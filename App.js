@@ -28,15 +28,15 @@ export default function App() {
             },
           }}
         />
-        {/* <Tab.Screen
+        <Tab.Screen
           name="Pesquisa"
-          component={Pesquisa}
+          component={ComponentePesquisa}
           options={{
             tabBarIcon: ({ color, size }) => {
               return <Feather name="search" color={color} size={size} />;
             },
           }}
-        /> */}
+        />
       </Tab.Navigator>
     );
   }

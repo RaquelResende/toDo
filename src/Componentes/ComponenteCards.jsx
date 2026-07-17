@@ -19,7 +19,7 @@ export default function Cards() {
   const [colunas, setColunas] = useState([
     {
       id: "1",
-      titulo: "A Fazer",
+      titulo: "A Fazereee",
       tarefas: [
         {
           id: "1",
@@ -58,7 +58,12 @@ export default function Cards() {
       console.log("Salvando", lista);
 
       await AsyncStorage.setItem("@tarefas", JSON.stringify(lista));
+
       console.log("Salvou");
+
+         const teste = await AsyncStorage.getItem("@tarefas");
+    console.log("Depois de salvar:", teste);
+
     } catch (error) {
       console.log("Erro de salvar", error);
     }
@@ -75,6 +80,9 @@ export default function Cards() {
     }
   }
   async function adicionarTarefas() {
+
+  console.log("Entrou em adicionarTarefas");
+
     if (novaTarefa.trim() === "") return;
 
     const novaLista = colunas.map((coluna) => ({
@@ -94,7 +102,11 @@ export default function Cards() {
 
       setColunas(novaLista);
       console.log("Estado atualizado:", novaLista);
+
+      console.log("Antes de salvar");
       await salvarTarefas(novaLista);
+     console.log("Depois de salvar");
+
     }
     setNovaTarefa("");
     setModalVisivel(false);
