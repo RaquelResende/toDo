@@ -6,28 +6,39 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { Link } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
 
 export default function ComponenteCadastro() {
+  const [nome, setNome] = useState("");
+  const [senha, setSenha] = useState("");
+  const [usuarios, setUsuarios] = useState([]);
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const navigation = useNavigation();
+  const [mostrarUsuarios, setMostrarUsuarios] = useState(false);
 
   async function SalvarNovoUsuario() {
-    try{
-      if(nome.trim() === "" || senha.trim() === ""){
-        alert("Precisa preencher os campo");return
+    try {
+      if (nome.trim() === "" || senha.trim() === "") {
+        alert("Precisa preencher os campo");
+        return;
       }
 
-      if(senha.length < 6){
-        alert("Senha deve conter 5 caracterer");return
+      if (senha.length < 6) {
+        alert("Senha deve conter pelo menos 6 caractereres");
+        return;
       }
 
-      if(!/[A-Z]/.test(senha)){
-        alert("Sua senha deve conter pelo menos uma letra maúscula");return
+      if (!/[A-Z]/.test(senha)) {
+        alert("Sua senha deve conter pelo menos uma letra maúscula");
+        return;
       }
-      if(!/[0-9]/.test(senha)){
-     alert("Sua senha deve conter pelo menos um numero")
+      if (!/[0-9]/.test(senha)) {
+        alert("Sua senha deve conter pelo menos um numero");
+        return;
       }
       const novoUsuario = {
         id: Date.now().toString(),
@@ -36,25 +47,81 @@ export default function ComponenteCadastro() {
       };
 
       const dados = await AsyncStorage.getItem("usuarios");
-      let lista = []
+      let lista = [];
 
-      if(dados !== null ){
+      if (dados !== null) {
         lista = JSON.parse(dados);
       }
       lista.push(novoUsuario);
-
-      
 
       await AsyncStorage.setItem("usuarios", JSON.stringify(lista));
       setUsuarios(lista);
 
       setNome("");
       setSenha("");
-       alert("Usuario salvo com sucesso!")
-    }catch(error){
-      console.log
+      alert("Usuario salvo com sucesso!");
+    } catch (error) {
+      console.log(error.message);
     }
-    
+  }
+
+  async function resgatarUsuario() {
+    try {
+      if (mostrarUsuarios) {
+        setMostrarUsuarios(false);
+        return;
+      }
+      const dados = await AsyncStorage.getItem("usuarios");
+
+      if (dados !== null) {
+        setUsuarios(JSON.parse(dados));
+        setMostrarUsuarios(true);
+      } else {
+        alert("Nao há nenhum usuario cadastrado");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async function removerUsuario(idUsuario) {
+    try {
+      const novaLista = usuarios.filter((usuario) => usuario.id !== idUsuario);
+      await AsyncStorage.setItem("usuarios", JSON.stringify(novaLista));
+
+      setUsuarios(novaLista);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async function selecionarUsuario(usuario) {
+    setUsuarioSelecionado(usuario);
+    setNome(usuario.nome);
+    setSenha(usuario.senha);
+  }
+
+  async function atualizarUsuario() {
+    try {
+      const novaLista = usuarios.map((usuario) => {
+        if (usuario.id === usuarioSelecionado.id) {
+          return {
+            ...usuario,
+            nome,
+            senha,
+          };
+        }
+        return usuario;
+      });
+      await AsyncStorage.setItem("usuarios", JSON.stringify(novaLista));
+
+      setUsuarios(novaLista);
+      setUsuarioSelecionado(null);
+      setNome("");
+      setSenha("");
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   return (
@@ -62,29 +129,74 @@ export default function ComponenteCadastro() {
       source={require("../../assets/ceu.jpg")}
       style={style.backgroudImagem}
     >
-
-
       <View style={style.containe}>
         <View style={style.cardLogin}>
-
-             <View style={style.tituloContaine}>
-        <Text style={style.titulo}>Cadastro</Text>
+          <View style={style.tituloContaine}>
+            <Text style={style.titulo}>Cadastro</Text>
           </View>
           <View>
             <Text style={style.texto}>E-mail</Text>
-            <TextInput style={style.input}></TextInput>
+            <TextInput
+              style={style.input}
+              value={nome}
+              onChangeText={setNome}
+            ></TextInput>
 
             <Text style={style.texto}>Nova Senha:</Text>
-            <TextInput style={style.input}></TextInput>
+            <TextInput
+              style={style.input}
+              value={senha}
+              onChangeText={setSenha}
+              secureTextEntry
+            ></TextInput>
           </View>
 
           <View>
-            <TouchableOpacity 
-            onPress={SalvarNovoUsuario}  style={style.botaoContaine}>
-              <Text style={style.botaoTexto}>Cadastrar</Text>
+            <TouchableOpacity
+              onPress={
+                usuarioSelecionado ? atualizarUsuario : SalvarNovoUsuario
+              }
+              style={style.botaoContaine}
+            >
+              <Text style={style.botaoTexto}>
+                {usuarioSelecionado ? "Atualiza" : "Cadastrar"}
+              </Text>
             </TouchableOpacity>
           </View>
 
+          <View>
+            <TouchableOpacity
+              onPress={resgatarUsuario}
+              style={style.botaoContaine}
+            >
+              <Text style={style.botaoTexto}>
+                {mostrarUsuarios ? "Ocultar" : "Exibir"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {mostrarUsuarios && (
+            <View>
+              {usuarios.map((usuario) => (
+                <View key={usuario.id}>
+                  <TouchableOpacity onPress={() => selecionarUsuario(usuario)}>
+                    <Text>{usuario.nome}</Text>
+                    <Text>{usuario.senha}</Text>
+                  </TouchableOpacity>
+
+                  <View style={style.trash}>
+                    <TouchableOpacity
+                      onPress={() => removerUsuario(usuario.id)}
+                      style={style.botaoExcluirUsuario}
+                    >
+                      <Text style={style.trash}>
+                        <FontAwesome name="trash" size={20} color={"#a80b0b"} />
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
           <View style={style.subtituloCntainer}>
             <Text>
               Volte para o Login |
@@ -108,7 +220,7 @@ const style = StyleSheet.create({
 
   cardLogin: {
     width: "80%",
-    height:"95%",
+    height: "95%",
     padding: 10,
     borderWidth: 1,
     borderColor: "#000000",
@@ -158,7 +270,7 @@ const style = StyleSheet.create({
     color: "#fff",
     paddind: 4,
     fontSize: 15,
-    padding:5,
+    padding: 5,
   },
   subtituloCntainer: {
     justifyContent: "center",
@@ -168,5 +280,8 @@ const style = StyleSheet.create({
   link: {
     color: "#fff",
     textDecorationColor: "none",
+  },
+  trash: {
+    alignSelf: "flex-end",
   },
 });

@@ -1,16 +1,17 @@
-import { StatusBar } from "expo-status-bar";
+
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Home from "./src/Pages/Home.js";
 import Pesquisa from "./src/Pages/Pesquisa.js";
 import ComponenteRecuperarSenha from "./src/Componentes/ComponenteRecuperarSenha.jsx";
 
 import ComponenteLogin from "./src/Componentes/ComponenteLogin.jsx";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ComponenteCadastro from "./src/Componentes/ComponenteCadastro.jsx";
+import ComponentePesquisa from "./src/Componentes/ComponentePesquisa.jsx";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,7 +28,7 @@ export default function App() {
             },
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Pesquisa"
           component={Pesquisa}
           options={{
@@ -35,7 +36,7 @@ export default function App() {
               return <Feather name="search" color={color} size={size} />;
             },
           }}
-        />
+        /> */}
       </Tab.Navigator>
     );
   }
@@ -50,8 +51,9 @@ export default function App() {
         />
         <Stack.Screen name="Tabs" component={Tabs} />
 
-        <Stack.Screen name="Cadastrar" 
-        component={ComponenteCadastro}/>
+        <Stack.Screen name="Cadastrar" component={ComponenteCadastro} />
+        <Stack.Screen name= "Pesquisa" component={ComponentePesquisa}/>
+
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FlatList,
   ScrollView,
@@ -9,16 +9,12 @@ import {
   Modal,
 } from "react-native";
 import { TextInput } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Home() {
-  const navigation = useNavigation();
-
-  const [modalVisivel, setModalVisivel] = useState(false);
-  const [novaTarefa, setNovaTarefa] = useState("");
-  const [colunaSelecionada, setColunaSelecionada] = useState(null);
-  const [colunas, setColunas] = useState([
+  const colunasInicial = [
     {
       id: "1",
       titulo: "A Fazer",
@@ -49,14 +45,43 @@ export default function Home() {
         },
       ],
     },
-  ]);
+  ];
+  const navigation = useNavigation();
+  const [modalVisivel, setModalVisivel] = useState(false);
+  const [novaTarefa, setNovaTarefa] = useState("");
+  const [colunaSelecionada, setColunaSelecionada] = useState(null);
+  const [colunas, setColunas] = useState(colunasInicial);
 
   function adicionarModal(idColuna) {
     setColunaSelecionada(idColuna);
     setModalVisivel(true);
   }
 
-  function adicionarTarefa() {
+  useEffect(() => {
+    carregarTarefas();
+  }, []);
+
+  async function carregarTarefas() {
+    try {
+      const dados = await AsyncStorage.getItem("colunas");
+
+      if (dados != null) {
+        setColunas(JSON.parse(dados));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function salvarTarefas(lista) {
+    try {
+      await AsyncStorage.setItem("colunas", JSON.stringify(lista));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function adicionarTarefa() {
     if (!novaTarefa.trim()) return;
     const novaLista = [...colunas];
 
@@ -65,15 +90,21 @@ export default function Home() {
     coluna.tarefas.push({ id: Date.now().toString(), nome: novaTarefa });
 
     setColunas(novaLista);
+
+    await salvarTarefas(novaLista);
+
     setNovaTarefa("");
+    setModalVisivel(false);
   }
 
-  function removerTarefa(idColuna, idTarefa) {
+  async function removerTarefa(idColuna, idTarefa) {
     const novaLista = [...colunas];
     const coluna = novaLista.find((coluna) => coluna.id === idColuna);
+
     coluna.tarefas = coluna.tarefas.filter((tarefa) => tarefa.id !== idTarefa);
 
     setColunas(novaLista);
+    await salvarTarefas(novaLista);
   }
 
   function navegarSobre() {
@@ -82,6 +113,11 @@ export default function Home() {
 
   return (
     <ScrollView showsVerticalScrollIndicator={true}>
+      <View>
+        <TouchableOpacity onPress={() => navigation.navigate("Pesquisar")}>
+          <Ionicons name="search" size={20} color="#000000" />
+        </TouchableOpacity>
+      </View>
       {/* Testes de navegação */}
       {/* <View>
         <TouchableOpacity onPress={() => navigation.navigate("Pesquisa")}>
@@ -91,9 +127,7 @@ export default function Home() {
       {colunas.map((coluna) => (
         <View key={coluna.id} style={style.coluna}>
           <Text style={style.titulo}>{coluna.titulo}</Text>
-          <TouchableOpacity
-            onPress={() => adicionarModal(coluna.id, coluna.titulo)}
-          >
+          <TouchableOpacity onPress={() => adicionarModal(coluna.id)}>
             <Ionicons name="add-circle" size={40} color="#2196F3" />
           </TouchableOpacity>
           <FlatList
@@ -114,7 +148,7 @@ export default function Home() {
           />
           <Modal
             visible={modalVisivel}
-            transparente={true}
+            transparent={true}
             animationType="slide"
           >
             <View>
@@ -155,7 +189,7 @@ export default function Home() {
 }
 const style = StyleSheet.create({
   coluna: {
-    with: 250,
+    width: "100%",
     margin: 10,
     backgroundColor: "#ECEFF1",
     padding: 10,

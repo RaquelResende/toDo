@@ -20,23 +20,24 @@ export default function ComponenteLogin() {
   const [senha, setSenha] = useState("");
   const [usuarios, setUsuarios] = useState([]);
 
-
-  
-  async function SalvarNovoUsuario() {
-    try{
-      if(nome.trim() === "" || senha.trim() === ""){
-        alert("Precisa preencher os campo");return
+  async function salvarNovoUsuario() {
+    try {
+      if (nome.trim() === "" || senha.trim() === "") {
+        alert("Precisa preencher os campo");
+        return;
       }
 
-      if(senha.length < 6){
-        alert("Senha deve conter 5 caracterer");return
+      if (senha.length < 6) {
+        alert("Senha deve conter 5 caracterer");
+        return;
       }
 
-      if(!/[A-Z]/.test(senha)){
-        alert("Sua senha deve conter pelo menos uma letra maúscula");return
+      if (!/[A-Z]/.test(senha)) {
+        alert("Sua senha deve conter pelo menos uma letra maúscula");
+        return;
       }
-      if(!/[0-9]/.test(senha)){
-     alert("Sua senha deve conter pelo menos um numero")
+      if (!/[0-9]/.test(senha)) {
+        alert("Sua senha deve conter pelo menos um numero");
       }
       const novoUsuario = {
         id: Date.now().toString(),
@@ -45,52 +46,64 @@ export default function ComponenteLogin() {
       };
 
       const dados = await AsyncStorage.getItem("usuarios");
-      let lista = []
+      let lista = [];
 
-      if(dados !== null ){
+      if (dados !== null) {
         lista = JSON.parse(dados);
       }
       lista.push(novoUsuario);
-
-      
 
       await AsyncStorage.setItem("usuarios", JSON.stringify(lista));
       setUsuarios(lista);
 
       setNome("");
       setSenha("");
-       alert("Usuario salvo com sucesso!")
-    }catch(error){
-      console.log
+      alert("Usuario salvo com sucesso!");
+    } catch (error) {
+      console.log;
     }
-    
   }
 
-  async function fazerLogin(){
-
-    try{
+  async function fazerLogin() {
+    try {
       const dados = await AsyncStorage.getItem("usuarios");
 
-      if(dados === null){
-        alert("Nenhum usuario cadastrado!");return;
+      if (dados === null) {
+        alert("Nenhum usuario cadastrado!");
+        return;
       }
 
-      const lista = JSON.parse("dados");
+      const lista = JSON.parse(dados);
 
-      const usuarioEncontrado = lista.find((usuario) => usuario.nome === nome && usuario.senha === senha)
+      const usuarioEncontrado = lista.find(
+        (usuario) => usuario.nome === nome && usuario.senha === senha,
+      );
 
-      if(usuarioEncontrado){
-        navigation.navigate("Tabs")
-        alert("Usuario encontrado com sucesso!")
-
-      }else{
-        alert("Nao encontrado esse usuario")
+      if (usuarioEncontrado) {
+        navigation.navigate("Tabs");
+        alert("Usuario encontrado com sucesso!");
+      } else {
+        alert("Nao encontrado esse usuario");
       }
-
-    }catch(error){
+    } catch (error) {
       console.log("Algo deu errado", error);
     }
   }
+
+  async function resgatarUsuario() {
+    try {
+      const dados = await AsyncStorage.getItem("usuarios");
+
+      if (dados !== null) {
+        setUsuarios(JSON.parse(dados));
+      } else {
+        alert("Usuario nao encontrad");
+      }
+    } catch (error) {
+      console.log("Algo deu errado", error);
+    }
+  }
+
   return (
     <ImageBackground
       source={require("../../assets/ceu.jpg")}
@@ -104,27 +117,37 @@ export default function ComponenteLogin() {
 
           <View>
             <Text style={style.texto}>Usuario:</Text>
-            <TextInput style={style.input}></TextInput>
+            <TextInput
+              style={style.input}
+              value={nome}
+              onChangeText={setNome}
+            ></TextInput>
 
             <Text style={style.texto}>Senha:</Text>
-            <TextInput style={style.input}></TextInput>
+            <TextInput
+              style={style.input}
+              value={senha}
+              onChangeText={setSenha}
+            ></TextInput>
           </View>
 
-     <View style={style.containeBts}> 
-
-          <View>
-            <TouchableOpacity
-            onPress={()=> navigation.navigate(fazerLogin)} style={style.botaoContaine}>
-              <Text style={style.botaoTexto}>Entrar</Text>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <TouchableOpacity
-            onPress={()=> navigation.navigate("Cadastrar")} style={style.botaoContaine}>
-              <Text style={style.botaoTexto}>Cadastrar</Text>
-            </TouchableOpacity>
-          </View>
-
+          <View style={style.containeBts}>
+            <View>
+              <TouchableOpacity
+                onPress={fazerLogin}
+                style={style.botaoContaine}
+              >
+                <Text style={style.botaoTexto}>Entrar</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Cadastrar")}
+                style={style.botaoContaine}
+              >
+                <Text style={style.botaoTexto}>Cadastrar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={style.subtituloCntainer}>
@@ -133,7 +156,7 @@ export default function ComponenteLogin() {
               <TouchableOpacity
                 onPress={() => navigation.navigate("RecuperarSenha")}
               >
-                <Link style={style.link}> clique aqui</Link>
+                <Text style={style.link}> clique aqui</Text>
               </TouchableOpacity>
             </Text>
           </View>
@@ -152,7 +175,7 @@ const style = StyleSheet.create({
 
   cardLogin: {
     width: "70%",
-    height:"70%",
+    height: "70%",
     padding: 20,
     borderWidth: 1,
     borderColor: "#000000",
@@ -195,14 +218,14 @@ const style = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 3,
     margin: 10,
-    marginTop:20,
+    marginTop: 20,
   },
   botaoTexto: {
     color: "#fff",
   },
-  containeBts:{
- flexDirection: "row",
-  gap: 2,
+  containeBts: {
+    flexDirection: "row",
+    gap: 2,
   },
   subtituloCntainer: {
     flex: 1,
